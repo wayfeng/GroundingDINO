@@ -38,7 +38,7 @@ def get_sine_pos_embed(
         pos_embed (torch.Tensor): shape: [..., n*num_pos_feats].
     """
     scale = 2 * math.pi
-    dim_t = torch.arange(num_pos_feats, dtype=torch.float32, device=pos_tensor.device)
+    dim_t = torch.arange(num_pos_feats, dtype=pos_tensor.dtype, device=pos_tensor.device)
     dim_t = temperature ** (2 * torch.div(dim_t, 2, rounding_mode="floor") / num_pos_feats)
 
     def sine_func(x: torch.Tensor):
@@ -77,8 +77,8 @@ def gen_encoder_output_proposals(
         # import ipdb; ipdb.set_trace()
 
         grid_y, grid_x = torch.meshgrid(
-            torch.linspace(0, H_ - 1, H_, dtype=torch.float32, device=memory.device),
-            torch.linspace(0, W_ - 1, W_, dtype=torch.float32, device=memory.device),
+            torch.linspace(0, H_ - 1, H_, dtype=memory.dtype, device=memory.device),
+            torch.linspace(0, W_ - 1, W_, dtype=memory.dtype, device=memory.device),
         )
         grid = torch.cat([grid_x.unsqueeze(-1), grid_y.unsqueeze(-1)], -1)  # H_, W_, 2
 
@@ -205,7 +205,7 @@ def gen_sineembed_for_position(pos_tensor):
     # n_query, bs, _ = pos_tensor.size()
     # sineembed_tensor = torch.zeros(n_query, bs, 256)
     scale = 2 * math.pi
-    dim_t = torch.arange(128, dtype=torch.float32, device=pos_tensor.device)
+    dim_t = torch.arange(128, dtype=pos_tensor.dtype, device=pos_tensor.device)
     dim_t = 10000 ** (2 * (torch.div(dim_t, 2, rounding_mode='floor')) / 128)
     x_embed = pos_tensor[:, :, 0] * scale
     y_embed = pos_tensor[:, :, 1] * scale
